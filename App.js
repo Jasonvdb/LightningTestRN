@@ -9,6 +9,7 @@
 import React from 'react';
 import type {Node} from 'react';
 import {
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -17,6 +18,14 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+
+import lnd, {
+  ENetworks,
+  LndConf,
+  TCurrentLndState,
+} from '@synonymdev/react-native-lightning';
+
+const lndConf = new LndConf(ENetworks.testnet);
 
 import {
   Colors,
@@ -70,20 +79,18 @@ const App: () => Node = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+          <Button
+            title={'Start LND'}
+            onPress={async () => {
+              const res = await lnd.start(lndConf);
+              if (res.isErr()) {
+                //Lnd failed to start
+                return console.error(res.error);
+              }
+
+              alert(JSON.stringify(res));
+            }}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
